@@ -4,7 +4,7 @@ class Sumset():
     def __init__(self, base_set=None):
         self.set = base_set
         
-        if base_set == None:
+        if base_set is None:
             self.construct()
 
         self.card = len(self.set)
