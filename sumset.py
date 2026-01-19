@@ -8,6 +8,7 @@ from fractions import Fraction
 # self.construct(nums=None): Constructs a set, either by taking a list as input to the method, or by taking user input.    #
 # self.rand_set(length=0, min_element=0, max_element=0): Generates a random Sumset with the paramaters given.              #
 # self.doubling_constant: A property giving |A + A|/|A| as a Fraction object.                                              #
+# self.is_arithmetic_progression: A property returning True if the Sumset object is an arithmetic progression, False o/w.  #
 #                                                                                                                          #
 # self.__add__(): Add two Sumset objects as sumset. A + B = {a + b : a in A, b in B}.                                      #
 # self.__rmul__(): 3 * A = A + A + A                                                                                       #
