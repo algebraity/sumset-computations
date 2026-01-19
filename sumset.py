@@ -7,8 +7,6 @@ class Sumset():
         if base_set is None:
             self.construct()
 
-        self.card = len(self.set)
-
     def construct(self, nums=None):
         if nums is not None:
             self.set = nums
@@ -58,6 +56,22 @@ class Sumset():
         new_set = list(set(new_set))
         new_set = sorted(new_set)
         return Sumset(new_set)
+
+    def __rmul__(self, other):
+        if isinstance(other, int):
+            result = Sumset(A.set)
+            times = other-1
+            while times > 0:
+                result += A
+                times -= 1
+            return result
+
+    def __mul__(self, other):
+        if isinstance(other, int):
+            new_set = A.set
+            for i in range(0, len(new_set)):
+                new_set[i] *= other
+            return Sumset(new_set)
 
     def __str__(self):
         self.set = list(set(self.set))
