@@ -9,11 +9,13 @@ from fractions import Fraction
 # self.rand_set(length=0, min_element=0, max_element=0): Generates a random Sumset with the paramaters given.              #
 # self.doubling_constant: property giving |A + A|/|A| as a Fraction object.                                                #
 # self.is_arithmetic_progression: property returning True if the Sumset object is an arithmetic progression, False o/w.    #
+# self.is_geometric_progression: property returning True if the Sumset object is a geometric progression, False o/w.       #
 # self.additive_energy: property returning the additive energy E(A) of a Sumset object                                     #
 #                                                                                                                          #
 # self.__add__(): Add two Sumset objects as sumset. A + B = {a + b : a in A, b in B}.                                      #
 # self.__rmul__(): 3 * A = A + A + A                                                                                       #
 # self.__mul__(): A * 3 = {3a : a in A}                                                                                    #
+#                 A * B = {a * b : a in A, b in B}                                                                         #
 #                                                                                                                          #
 ############################################################################################################################
 class Sumset():
