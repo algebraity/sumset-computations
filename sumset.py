@@ -77,6 +77,17 @@ class Sumset():
             return True
 
     @property
+    def is_geometric_progression(self):
+        if len(self.set) == 1:
+            return True
+        else:
+            r = self.set[1] - self.set[0]
+            for i in range(2, len(self.set)):
+                if self.set[i] / self.set[i-1] != r:
+                    return False
+            return True
+
+    @property
     def additive_energy(self):
         r_vals = {}
         for a in self:
@@ -114,6 +125,15 @@ class Sumset():
                 result += self
                 times -= 1
             return result
+        if isinstance(other, Sumset):
+            prod_set = []
+            for i in self:
+                for j in other:
+                    if not i*j in prod_set:
+                        prod_set.append(i*j)
+
+            prod_set = sorted(set(prod_set))
+            return Sumset(prod_set)
 
     def __mul__(self, other):
         if isinstance(other, int):
@@ -121,6 +141,15 @@ class Sumset():
             for i in range(0, len(new_set)):
                 new_set[i] *= other
             return Sumset(new_set)
+        if isinstance(other, Sumset):
+            prod_set = []
+            for i in self:
+                for j in other:
+                    if not i*j in prod_set:
+                        prod_set.append(i*j)
+
+            prod_set = sorted(set(prod_set))
+            return Sumset(prod_set)
 
     def __str__(self):
         self.set = list(set(self.set))
