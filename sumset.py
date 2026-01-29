@@ -8,6 +8,8 @@ from fractions import Fraction
 # self.construct(nums=None): constructs a set, either by taking a list as input to the method, or by taking user input.     #
 # self.translate(n): translates the set A by n, returning A + {n} = {a + n : a in A}                                        #
 # self.rand_set(length=0, min_element=0, max_element=0): generates a random Sumset with the paramaters given.               #
+# self.info(n): returns a dictionary containing all computable information about the set available in the Sumset class,     #
+#               including the list [2*A, 3*A, ..., n*A]                                                                     #
 #                                                                                                                           #
 # self.cardinality: property representing |A|                                                                               #
 # self.diameter: property giving the diameter of A                                                                          #
@@ -73,6 +75,27 @@ class Sumset():
 
         gen_set = sorted(gen_set)
         self.set = gen_set
+
+    def info(self, n=-1):
+        self_sum = self + self
+        self_prod = self * self
+        card = self.cardinality
+        diam = self.diameter
+        densty = self.density
+        dc = self.doubling_constant
+        is_ap = self.is_arithmetic_progression
+        is_gp = self.is_geometric_progression
+        ae = self.additive_energy
+        me = self.multiplicative_energy
+        if n > 1:
+            sum_list = []
+            for i in range(2, n+1):
+                sum_list.append(i*self)
+            return {"sum" : self_sum, "product": self_prod, "cardinality": card, "diameter": diam, "density": densty, "doubling constant": dc, "is additive progression": is_ap, "is geometric progression": is_gp, "additive energy": ae, "multiplicative energy": me, "i*A list": sum_list}
+
+        return {"sum" : self_sum, "product": self_prod, "cardinality": card, "diameter": diam, "density": densty, "doubling constant": dc, "is additive progression": is_ap, "is geometric progression": is_gp, "additive energy": ae, "multiplicative energy": me}
+
+
 
     @property
     def cardinality(self):
