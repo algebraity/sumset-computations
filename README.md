@@ -20,6 +20,7 @@ entirely Python-based, and no additional dependencies are required.
   * Is GP (True/False): `Sumset.is_geometric_progression`
   * Ordered additive energy: `Sumset.additive_energy`
   * Multiplicative energy: `Sumset.multiplicate_energy`
+* Return or invariants as a dictionary with `S.info(n)` or view them using `set_info.py`
 
 ## Repository layout
 * `sumset.py`: Sumset class implementation
@@ -45,6 +46,9 @@ A.doubling_constant                # Fraction(5, 3)
 A.is_arithmetic_progression        # True
 A.is_geometric_progression         # False
 A.additive_energy                  # 19
+
+A.info()                           # {'sum': Sumset([2, 3, 4, 5, 6]), 'product': Sumset([1, 2, 3, 4, 6, 9]), 'cardinality': 3, 'diameter': 2, 'density': 1.0, 'doubling constant': Fraction(5, 3), 'is additive progression': True, 'is geometric progression': False, 'additive energy': 19, 'multiplicative energy': 15}
+A.info(3)                          # {'sum': Sumset([2, 3, 4, 5, 6]), 'product': Sumset([1, 2, 3, 4, 6, 9]), 'cardinality': 3, 'diameter': 2, 'density': 1.0, 'doubling constant': Fraction(5, 3), 'is additive progression': True, 'is geometric progression': False, 'additive energy': 19, 'multiplicative energy': 15, 'i*A list': [Sumset([2, 3, 4, 5, 6]), Sumset([3, 4, 5, 6, 7, 8, 9])]}
 ```
 Output of `set_info.py` program
 ```bash
