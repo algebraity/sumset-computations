@@ -91,9 +91,9 @@ class Sumset():
             sum_list = []
             for i in range(2, n+1):
                 sum_list.append(i*self)
-            return {"sum" : self_sum, "product": self_prod, "cardinality": card, "diameter": diam, "density": densty, "doubling constant": dc, "is additive progression": is_ap, "is geometric progression": is_gp, "additive energy": ae, "multiplicative energy": me, "i*A list": sum_list}
+            return {"additive_doubling_set" : self_sum, "mult_doubling_set": self_prod, "cardinality": card, "diameter": diam, "density": densty, "dc": dc, "is_ap": is_ap, "is_gp": is_gp, "additive_energy": ae, "mult_energy": me, "i*A_list": sum_list}
 
-        return {"sum" : self_sum, "product": self_prod, "cardinality": card, "diameter": diam, "density": densty, "doubling constant": dc, "is additive progression": is_ap, "is geometric progression": is_gp, "additive energy": ae, "multiplicative energy": me}
+        return {"additive_doubling_set" : self_sum, "mult_doubling_set": self_prod, "cardinality": card, "diameter": diam, "density": densty, "dc": dc, "is_ap": is_ap, "is_gp": is_gp, "additive_energy": ae, "mult_energy": me}
 
 
 
