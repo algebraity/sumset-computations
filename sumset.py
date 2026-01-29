@@ -1,23 +1,30 @@
 import random as rand
 from fractions import Fraction
 
-############################################################################################################################
-#                                                                                                                          #
-# self.set (list): The mathematical set represented by the Sumset object.                                                  #
-#                                                                                                                          #
-# self.construct(nums=None): Constructs a set, either by taking a list as input to the method, or by taking user input.    #
-# self.rand_set(length=0, min_element=0, max_element=0): Generates a random Sumset with the paramaters given.              #
-# self.doubling_constant: property giving |A + A|/|A| as a Fraction object.                                                #
-# self.is_arithmetic_progression: property returning True if the Sumset object is an arithmetic progression, False o/w.    #
-# self.is_geometric_progression: property returning True if the Sumset object is a geometric progression, False o/w.       #
-# self.additive_energy: property returning the additive energy E(A) of a Sumset object                                     #
-#                                                                                                                          #
-# self.__add__(): Add two Sumset objects as sumset. A + B = {a + b : a in A, b in B}.                                      #
-# self.__rmul__(): 3 * A = A + A + A                                                                                       #
-# self.__mul__(): A * 3 = {3a : a in A}                                                                                    #
-#                 A * B = {a * b : a in A, b in B}                                                                         #
-#                                                                                                                          #
-############################################################################################################################
+#############################################################################################################################
+#                                                                                                                           #
+# self.set (list): The mathematical set represented by the Sumset object.                                                   #
+#                                                                                                                           #
+# self.construct(nums=None): constructs a set, either by taking a list as input to the method, or by taking user input.     #
+# self.tranlsate(n): translates the set A by n, returning A + {n} = {a + n : a in A}                                        #
+# self.rand_set(length=0, min_element=0, max_element=0): generates a random Sumset with the paramaters given.               #
+#                                                                                                                           #
+# self.cardinality: property representing |A|                                                                               #
+# self.diameter: property giving the diameter of A                                                                          #
+# self.density: property giving |A|/(maxA - minA + 1)                                                                       #
+# self.doubling_constant: property giving |A + A|/|A| as a Fraction object.                                                 #
+# self.is_arithmetic_progression: property returning True if the Sumset object is an arithmetic progression, False o/w.     #
+# self.is_geometric_progression: property returning True if the Sumset object is a geometric progression, False o/w.        #
+# self.additive_energy: property returning the additive energy E(A) of a Sumset object                                      #
+# self.multiplicative_energy: property returning the multiplicative energy of a Sumset object                               #
+#                                                                                                                           #
+# self.__add__(): Add two Sumset objects as sumset. A + B = {a + b : a in A, b in B}.                                       #
+# self.__rmul__(): 3 * A = A + A + A                                                                                        #
+# self.__mul__(): A * 3 = {3a : a in A}                                                                                     #
+#                 A * B = {a * b : a in A, b in B}                                                                          #
+# self.__pow__(): A ** n = A * A * ... * A                                                                                  #
+#                                                                                                                           #
+#############################################################################################################################
 class Sumset():
     def __init__(self, base_set=None):
         self.set = base_set
@@ -48,6 +55,10 @@ class Sumset():
         self.set = list(set(self.set))
         self.set = sorted(self.set)
 
+    def translate(self, n):
+        for i in range(1, len(self.set)+1):
+            self.set[i] += n
+
     def rand_set(self, length=0, min_element=0, max_element=0):
         gen_set = []
         if max_element - min_element + 1 < length:
@@ -59,6 +70,18 @@ class Sumset():
 
         gen_set = sorted(gen_set)
         self.set = gen_set
+
+    @property
+    def cardinality(self):
+        return len(self.set)
+        
+    @property
+    def diameter(self):
+        return (self.set[-1] - self.set[0])
+
+    @property
+    def density(self):
+        return self.cardinality / (self.set[-1] - self.set[0] + 1)
 
     @property
     def doubling_constant(self):
@@ -83,7 +106,7 @@ class Sumset():
         if len(self.set) == 1:
             return True
         else:
-            r = self.set[1] - self.set[0]
+            r = self.set[1] / self.set[0]
             for i in range(2, len(self.set)):
                 if self.set[i] / self.set[i-1] != r:
                     return False
@@ -98,6 +121,21 @@ class Sumset():
                     r_vals[a + b] += 1
                 else:
                     r_vals[a + b] = 1
+        energy = 0
+        for r in r_vals:
+            energy += r_vals[r]**2
+
+        return energy
+
+    @property
+    def multiplicative_energy(self):
+        r_vals = {}
+        for a in self:
+            for b in self:
+                if a*b in r_vals.keys():
+                    r_vals[a*b] += 1
+                else:
+                    r_vals[a*b] = 1
         energy = 0
         for r in r_vals:
             energy += r_vals[r]**2
@@ -152,6 +190,16 @@ class Sumset():
 
             prod_set = sorted(set(prod_set))
             return Sumset(prod_set)
+
+    def __pow__(self, other):
+        if isinstance(other, int):
+            current = Sumset(self.set)
+            n = other
+            while n > 1:
+                current *= self
+                n -= 1
+
+            return current
 
     def __str__(self):
         self.set = list(set(self.set))
