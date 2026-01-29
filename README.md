@@ -47,8 +47,8 @@ A.is_arithmetic_progression        # True
 A.is_geometric_progression         # False
 A.additive_energy                  # 19
 
-A.info()                           # {'sum': Sumset([2, 3, 4, 5, 6]), 'product': Sumset([1, 2, 3, 4, 6, 9]), 'cardinality': 3, 'diameter': 2, 'density': 1.0, 'doubling constant': Fraction(5, 3), 'is additive progression': True, 'is geometric progression': False, 'additive energy': 19, 'multiplicative energy': 15}
-A.info(3)                          # {'sum': Sumset([2, 3, 4, 5, 6]), 'product': Sumset([1, 2, 3, 4, 6, 9]), 'cardinality': 3, 'diameter': 2, 'density': 1.0, 'doubling constant': Fraction(5, 3), 'is additive progression': True, 'is geometric progression': False, 'additive energy': 19, 'multiplicative energy': 15, 'i*A list': [Sumset([2, 3, 4, 5, 6]), Sumset([3, 4, 5, 6, 7, 8, 9])]}
+A.info()                           # {'additive_doubling_set': Sumset([2, 3, 4, 5, 6]), 'mult_doubling_set': Sumset([1, 2, 3, 4, 6, 9]), 'cardinality': 3, 'diameter': 2, 'density': 1.0, 'dc': Fraction(5, 3), 'is_ap': True, 'is_gp': False, 'additive_energy': 19, 'mult_energy': 15}
+A.info(3)                          # {'additive_doubling_set': Sumset([2, 3, 4, 5, 6]), 'mult_doubling_set': Sumset([1, 2, 3, 4, 6, 9]), 'cardinality': 3, 'diameter': 2, 'density': 1.0, 'dc': Fraction(5, 3), 'is_ap': True, 'is_gp': False, 'additive_energy': 19, 'mult_energy': 15, 'i*A_list': [Sumset([2, 3, 4, 5, 6]), Sumset([3, 4, 5, 6, 7, 8, 9])]}
 ```
 Output of `set_info.py` program
 ```bash
