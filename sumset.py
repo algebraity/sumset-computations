@@ -6,7 +6,7 @@ from fractions import Fraction
 # self.set (list): The mathematical set represented by the Sumset object.                                                   #
 #                                                                                                                           #
 # self.construct(nums=None): constructs a set, either by taking a list as input to the method, or by taking user input.     #
-# self.tranlsate(n): translates the set A by n, returning A + {n} = {a + n : a in A}                                        #
+# self.translate(n): translates the set A by n, returning A + {n} = {a + n : a in A}                                        #
 # self.rand_set(length=0, min_element=0, max_element=0): generates a random Sumset with the paramaters given.               #
 #                                                                                                                           #
 # self.cardinality: property representing |A|                                                                               #
@@ -56,8 +56,11 @@ class Sumset():
         self.set = sorted(self.set)
 
     def translate(self, n):
-        for i in range(1, len(self.set)+1):
-            self.set[i] += n
+        translated_set = []
+        for i in range(0, len(self.set)):
+            translated_set.append(self.set[i] + n)
+
+        return Sumset(translated_set)
 
     def rand_set(self, length=0, min_element=0, max_element=0):
         gen_set = []
