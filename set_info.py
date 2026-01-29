@@ -31,10 +31,14 @@ if isinstance(s, list):
             computed.append(i*S)
             
     print("S = " + str(S.set))
-    print("Cardinality of S: " + str(len(S.set)))
+    print("Cardinality of S: " + str(S.cardinality))
+    print("Diameter of S: " + str(S.diameter))
+    print("Density of S: " + str(S.density))
     print("Doubling constant of S: " + str(S.doubling_constant))
     print("Is arithmetic progression: " + str(S.is_arithmetic_progression))
+    print("Is geometric progression: " + str(S.is_geometric_progression))
     print("Additive energy: " + str(S.additive_energy))
+    print("Multiplicative energy: " + str(S.multiplicative_energy))
     if num > 1:
         print("iS for 2 <= i <= " + str(num) + ": ")
         for i in range(0, len(computed)):
