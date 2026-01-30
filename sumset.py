@@ -26,8 +26,8 @@ from fractions import Fraction
 # self.sds: property returning A-A, caching it if not yet computed and reading from self.sub_cahce otherwise                #
 # self.mds: property returning A*A, caching it if not yet computed and reading from self.mult_cache otherwise               #
 # self.ads_cardinality: property giving |A+A|                                                                               #
-# self.mds_cardinality: property giving |A*A|                                                                               #
 # self.sds_cardinality: property giving |A-A|                                                                               #
+# self.mds_cardinality: property giving |A*A|                                                                               #
 # self.doubling_constant: property giving |A + A|/|A| as a Fraction object.                                                 #
 # self.is_arithmetic_progression: property returning True if the Sumset object is an arithmetic progression, False o/w.     #
 # self.is_geometric_progression: property returning True if the Sumset object is a geometric progression, False o/w.        #
