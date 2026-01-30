@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ookami"
+version = "1.0.0"
+description = "Additive/multiplicative combinatorics utilities on subsets of Z."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "GPL-3.0" }
+authors = [{ name = "Algebraity" }]
+dependencies = []
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
