@@ -5,39 +5,39 @@ from fractions import Fraction
 #                                                                                                                           #
 # PRE-PRE RELEASE -- v0.0.1 (Pre-alpha)                                                                                     #
 #                                                                                                                           #
-# An implementation of methods and properties applicable to a subset of the integers Z, along with methods of               #
-# constructing them. Suitable for research in additive and multiplicative combinatorics on subsets of Z.                    #
+# An implementation of methods and properties applicable to a diffset of the integers Z, along with methods of              #
+# constructing them. Suitable for research in additive and multiplicative combinatorics on diffsets of Z.                   #
 #                                                                                                                           #
-# self.set (list): the mathematical set represented by the Sumset object                                                    #
+# self.set (list): the mathematical set represented by the CombSet object                                                   #
 # self.add_cache (dict): a cache storing computed values of i*A                                                             #
-# self.sub_cache (dict): a cache storing computed values of (-i)*A                                                          #
+# self.diff_cache (dict): a cache storing computed values of (-i)*A                                                         #
 # self.mult_cache (dict): a cache storing computed values of A**i                                                           #
 #                                                                                                                           #
 # self.construct(nums=None): constructs a set, either by taking a list as input to the method, or by taking user input.     #
 # self.translate(n): translates the set A by n, returning A + {n} = {a + n : a in A}                                        #
-# self.rand_set(length=0, min_element=0, max_element=0): generates a random Sumset with the paramaters given.               #
-# self.info(n): returns a dictionary containing all computable information about the set available in the Sumset class,     #
+# self.rand_set(length=0, min_element=0, max_element=0): generates a random CombSet with the paramaters given.              #
+# self.info(n): returns a dictionary containing all computable information about the set available in the CombSet class,    #
 #               including the list [2*A, 3*A, ..., n*A]                                                                     #
 #                                                                                                                           #
 # self.cardinality: property representing |A|                                                                               #
 # self.diameter: property giving the diameter of A                                                                          #
 # self.density: property giving |A|/(maxA - minA + 1)                                                                       #
 # self.ads: property returning A+A, caching it if not yet computed and reading from self.add_cache otherwise                #
-# self.sds: property returning A-A, caching it if not yet computed and reading from self.sub_cahce otherwise                #
+# self.dds: property returning A-A, caching it if not yet computed and reading from self.diff_cahce otherwise               #
 # self.mds: property returning A*A, caching it if not yet computed and reading from self.mult_cache otherwise               #
 # self.ads_cardinality: property giving |A+A|                                                                               #
-# self.sds_cardinality: property giving |A-A|                                                                               #
+# self.dds_cardinality: property giving |A-A|                                                                               #
 # self.mds_cardinality: property giving |A*A|                                                                               #
 # self.doubling_constant: property giving |A + A|/|A| as a Fraction object.                                                 #
-# self.is_arithmetic_progression: property returning True if the Sumset object is an arithmetic progression, False o/w.     #
-# self.is_geometric_progression: property returning True if the Sumset object is a geometric progression, False o/w.        #
-# self.additive_energy: property returning the additive energy E(A) of a Sumset object                                      #
-# self.multiplicative_energy: property returning the multiplicative energy of a Sumset object                               #
+# self.is_arithmetic_progression: property returning True if the CombSet object is an arithmetic progression, False o/w.    #
+# self.is_geometric_progression: property returning True if the CombSet object is a geometric progression, False o/w.       #
+# self.additive_energy: property returning the additive energy E(A) of a CombSet object                                     #
+# self.multiplicative_energy: property returning the multiplicative energy of a CombSet object                              #
 #                                                                                                                           #
 # self._clear_cache(): clears self.add_cache and self.mult_cache                                                            #
 # self._normalize(): sets self.set = sorted(set(self.set))                                                                  #
 #                                                                                                                           #
-# self.__add__(): add two Sumset objects as sumset. A + B = {a + b : a in A, b in B}                                        #
+# self.__add__(): add two CombSet objects as CombSet. A + B = {a + b : a in A, b in B}                                      #
 # self.__rmul__(): 3 * A = A + A + A                                                                                        #
 # self.__mul__(): A * 3 = {3a : a in A}                                                                                     #
 #                 A * B = {a * b : a in A, b in B}                                                                          #
@@ -46,16 +46,20 @@ from fractions import Fraction
 # self.__neg__(): -A = {-a : a in A}                                                                                        #
 #                                                                                                                           #
 #############################################################################################################################
-class Sumset():
+class CombSet():
     def __init__(self, base_set=None):
         if base_set is not None:
             if base_set == []:
                 raise ValueError("base_set cannot be empty!")
             self.set = base_set
             self._normalize()
+        
         self.add_cache = {}
-        self.sub_cache = {}
+        self.diff_cache = {}
         self.mult_cache = {}
+        self.rep_add_cache = {}
+        self.rep_diff_cache = {}
+        self.rep_mult_cache = {}
         
         if base_set is None:
             self.construct()
@@ -96,13 +100,46 @@ class Sumset():
         for i in range(0, len(self.set)):
             translated_set.append(self.set[i] + n)
 
-        return Sumset(translated_set)
+        return CombSet(translated_set)
 
-    def rep_add(k=2):
-        pass
+    def rep_add(self, x):
+        if x in self.rep_add_cache:
+            return self.rep_add_cache[x]
+        
+        rep = 0
+        for a in self.set:
+            for b in self.set:
+                if a + b == x:
+                    rep += 1
+        
+        self.rep_add_cache[x] = rep
+        return self.rep_add_cache[x]
 
-    def rep_mult(k=2):
-        pass
+    def rep_diff(self, x):
+        if x in self.rep_diff_cache:
+            return self.rep_diff_cache[x]
+        
+        rep = 0
+        for a in self.set:
+            for b in self.set:
+                if a - b == x:
+                    rep += 1
+        
+        self.rep_diff_cache[x] = rep
+        return self.rep_diff_cache[x]
+
+    def rep_mult(self, x):
+        if x in self.rep_mult_cache:
+            return self.rep_mult_cache[x]
+        
+        rep = 0
+        for a in self.set:
+            for b in self.set:
+                if a * b == x:
+                    rep += 1
+        
+        self.rep_mult_cache[x] = rep
+        return self.rep_mult_cache[x]
 
     def rand_set(self, length=0, min_element=0, max_element=0):
         if length == 0:
@@ -121,7 +158,7 @@ class Sumset():
 
     def info(self, n=-1):
         self_sum = self.ads
-        self_diff = self.sds
+        self_diff = self.dds
         self_prod = self.mds
         card = self.cardinality
         diam = self.diameter
@@ -129,15 +166,16 @@ class Sumset():
         dc = self.doubling_constant
         is_ap = self.is_arithmetic_progression
         is_gp = self.is_geometric_progression
-        ae = self.additive_energy
-        me = self.multiplicative_energy
+        add_energy = self.energy_add
+        diff_energy = self.energy_diff
+        mult_energy = self.energy_mult
         if n > 1:
             sum_list = []
             for i in range(2, n+1):
                 sum_list.append(i*self)
-            return {"add_ds": self_sum, "sub_ds": self_diff, "mult_ds": self_prod, "cardinality": card, "diameter": diam, "density": densty, "dc": dc, "is_ap": is_ap, "is_gp": is_gp, "additive_energy": ae, "mult_energy": me, "i*A_list": sum_list}
+            return {"add_ds": self_sum, "diff_ds": self_diff, "mult_ds": self_prod, "cardinality": card, "diameter": diam, "density": densty, "dc": dc, "is_ap": is_ap, "is_gp": is_gp, "add_energy": add_energy, "mult_energy": mult_energy, "diff_energy": diff_energy, "i*A_list": sum_list}
 
-        return {"additive_doubling_set" : self_sum, "sub_ds": self_diff, "mult_doubling_set": self_prod, "cardinality": card, "diameter": diam, "density": densty, "dc": dc, "is_ap": is_ap, "is_gp": is_gp, "additive_energy": ae, "mult_energy": me}
+        return {"add_ds": self_sum, "diff_ds": self_diff, "mult_ds": self_prod, "cardinality": card, "diameter": diam, "density": densty, "dc": dc, "is_ap": is_ap, "is_gp": is_gp, "add_energy": add_energy, "mult_energy": mult_energy, "diff_energy": diff_energy}
 
     @property
     def cardinality(self):
@@ -158,10 +196,10 @@ class Sumset():
         return self.add_cache[2]
     
     @property
-    def sds(self):
-        if not 2 in self.sub_cache:
-            self.sub_cache[2] = self - self
-        return self.sub_cache[2]
+    def dds(self):
+        if not 2 in self.diff_cache:
+            self.diff_cache[2] = self - self
+        return self.diff_cache[2]
 
     @property
     def mds(self):
@@ -174,8 +212,8 @@ class Sumset():
         return len((self.ads).set)
 
     @property
-    def sds_cardinality(self):
-        return len((self.sds).set)
+    def dds_cardinality(self):
+        return len((self.dds).set)
 
     @property
     def mds_cardinality(self):
@@ -212,45 +250,63 @@ class Sumset():
             return True
 
     @property
-    def additive_energy(self):
-        r_vals = {}
+    def energy_add(self):
+        self.rep_add_cache = {}
         for a in self:
             for b in self:
-                if a + b in r_vals.keys():
-                    r_vals[a + b] += 1
+                if a + b in self.rep_add_cache:
+                    self.rep_add_cache[a + b] += 1
                 else:
-                    r_vals[a + b] = 1
+                    self.rep_add_cache[a + b] = 1
         energy = 0
-        for r in r_vals:
-            energy += r_vals[r]**2
+        for r in self.rep_add_cache:
+            energy += self.rep_add_cache[r]**2
 
         return energy
-
+    
     @property
-    def multiplicative_energy(self):
-        r_vals = {}
+    def energy_diff(self):
+        self.rep_diff_cache = {}
         for a in self:
             for b in self:
-                if a*b in r_vals.keys():
-                    r_vals[a*b] += 1
+                if a - b in self.rep_diff_cache:
+                    self.rep_diff_cache[a - b] += 1
                 else:
-                    r_vals[a*b] = 1
+                    self.rep_diff_cache[a - b] = 1
         energy = 0
-        for r in r_vals:
-            energy += r_vals[r]**2
+        for r in self.rep_diff_cache:
+            energy += self.rep_diff_cache[r]**2
+
+        return energy    
+
+    @property
+    def energy_mult(self):
+        self.rep_mult_cache = {}
+        for a in self:
+            for b in self:
+                if a * b in self.rep_mult_cache:
+                    self.rep_mult_cache[a * b] += 1
+                else:
+                    self.rep_mult_cache[a * b] = 1
+        energy = 0
+        for r in self.rep_mult_cache:
+            energy += self.rep_mult_cache[r]**2
 
         return energy
 
     def _clear_cache(self):
         self.add_cache = {}
-        self.sub_cache = {}
+        self.diff_cache = {}
         self.mult_cache = {}
+        self.rep_add_cache = {}
+        self.rep_diff_cache = {}
+        self.rep_mult_cache = {}
 
     def _normalize(self):
         self.set = sorted(set(self.set))
 
     def __add__(self, other):
-        if not isinstance(other, Sumset):
+        if not isinstance(other, CombSet):
             if isinstance(other, int):
                 return self.translate(other)
             raise(TypeError)
@@ -264,16 +320,16 @@ class Sumset():
                 if c not in new_set:
                     new_set.append(c)
 
-        return Sumset(new_set)
+        return CombSet(new_set)
 
-    def __sub__(self, other):
-        if not isinstance(other, Sumset):
+    def __diff__(self, other):
+        if not isinstance(other, CombSet):
             if isinstance(other, int):
                 return self.translate(-other)
             raise(TypeError)
         if other == self:
-            if 2 in self.sub_cache:
-                return self.sub_cache[2]
+            if 2 in self.diff_cache:
+                return self.diff_cache[2]
         new_set = []
         for a in self.set:
             for b in other.set:
@@ -281,17 +337,17 @@ class Sumset():
                 if c not in new_set:
                     new_set.append(c)
 
-        return Sumset(new_set)
+        return CombSet(new_set)
 
     def __rmul__(self, other):
         if isinstance(other, int):
             if other == 0:
-                return Sumset([0])
+                return CombSet([0])
             elif other in self.add_cache:
                 return self.add_cache[other]
-            elif other in self.sub_cache:
-                return self.sub_cache[other]
-            result = Sumset(self.set)
+            elif other in self.diff_cache:
+                return self.diff_cache[other]
+            result = CombSet(self.set)
             times = abs(other) - 1
             while times > 0:
                 if other > 0:
@@ -302,9 +358,9 @@ class Sumset():
             if other > 0:
                 self.add_cache[other] = result
             elif other < 0:
-                self.sub_cache[other] = result
+                self.diff_cache[other] = result
             return result
-        if isinstance(other, Sumset):
+        if isinstance(other, CombSet):
             prod_set = []
             for i in self:
                 for j in other:
@@ -312,34 +368,34 @@ class Sumset():
                         prod_set.append(i*j)
 
             prod_set = sorted(set(prod_set))
-            return Sumset(prod_set)
+            return CombSet(prod_set)
 
     def __mul__(self, other):
         if isinstance(other, int):
             if other == 0:
-                return Sumset([0])
+                return CombSet([0])
             new_set = (self.set).copy()
             for i in range(0, len(new_set)):
                 new_set[i] *= other
-            return Sumset(new_set)
-        if isinstance(other, Sumset):
+            return CombSet(new_set)
+        if isinstance(other, CombSet):
             prod_set = []
             for i in self:
                 for j in other:
                     if not i*j in prod_set:
                         prod_set.append(i*j)
 
-            return Sumset(prod_set)
+            return CombSet(prod_set)
 
     def __pow__(self, other):
         if isinstance(other, int):
             if other == 0:
-                return Sumset([1])
+                return CombSet([1])
             if other < 0:
                 raise ValueError("Negative exponentiation is not supported.")
             if other in self.mult_cache:
                 return self.mult_cache[other]
-            current = Sumset(self.set)
+            current = CombSet(self.set)
             n = other
             while n > 1:
                 current *= self
@@ -349,18 +405,18 @@ class Sumset():
             return self.mult_cache[other]
 
     def __str__(self):
-        return "Sumset(" + str(self.set) + ")"
+        return "CombSet(" + str(self.set) + ")"
 
     def __iter__(self):
         return iter(self.set)
 
     def __eq__(self, other):
-        if isinstance(other, Sumset):
+        if isinstance(other, CombSet):
             return self.set == other.set
         else:
             return False
         
     def __neg__(self):
-        return Sumset([-i for i in self.set])
+        return CombSet([-i for i in self.set])
 
     __repr__ = __str__
