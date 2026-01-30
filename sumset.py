@@ -10,7 +10,7 @@ from fractions import Fraction
 #                                                                                                                           #
 # self.set (list): the mathematical set represented by the Sumset object                                                    #
 # self.add_cache (dict): a cache storing computed values of i*A                                                             #
-# self.sub_cache (dict): a cache storing computed values of (-i)A                                                           #
+# self.sub_cache (dict): a cache storing computed values of (-i)*A                                                          #
 # self.mult_cache (dict): a cache storing computed values of A**i                                                           #
 #                                                                                                                           #
 # self.construct(nums=None): constructs a set, either by taking a list as input to the method, or by taking user input.     #
@@ -27,7 +27,7 @@ from fractions import Fraction
 # self.mds: property returning A*A, caching it if not yet computed and reading from self.mult_cache otherwise               #
 # self.ads_cardinality: property giving |A+A|                                                                               #
 # self.mds_cardinality: property giving |A*A|                                                                               #
-# self.sds_cardinality: property giving |A-A|                                                                               $
+# self.sds_cardinality: property giving |A-A|                                                                               #
 # self.doubling_constant: property giving |A + A|/|A| as a Fraction object.                                                 #
 # self.is_arithmetic_progression: property returning True if the Sumset object is an arithmetic progression, False o/w.     #
 # self.is_geometric_progression: property returning True if the Sumset object is a geometric progression, False o/w.        #
@@ -43,7 +43,7 @@ from fractions import Fraction
 #                 A * B = {a * b : a in A, b in B}                                                                          #
 # self.__pow__(): A ** n = A * A * ... * A (negative powers unsupported)                                                    #
 # self.__eq__(): A == B if and only if A.set == B.set                                                                       #
-# self.__neq__(): -A = {-a : a in A}                                                                                        #
+# self.__neg__(): -A = {-a : a in A}                                                                                        #
 #                                                                                                                           #
 #############################################################################################################################
 class Sumset():
