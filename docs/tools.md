@@ -188,5 +188,3 @@ The `tools` module is designed for:
 
 It is not required for basic use of OOKAMI’s core algebraic functionality.
 
-```
-
