@@ -1,6 +1,6 @@
 ![OOKAMI logo](https://media.discordapp.net/attachments/1416510086024663080/1466854379360354418/ookami.png?ex=697e4218&is=697cf098&hm=f4986fb7364763ffec24bfc38389323c113e767c8f365e0e1a15bdd86e8cb430&=&format=webp&quality=lossless&width=1316&height=482)
 
-# OOKAMI - v1.1.0
+# OOKAMI - v1.1.1
 
 The purpose of this project is to provide a set of tools that can be used for computations with
 subsets of the integers in additive and multiplicative combinatorics. It is designed with my own research goals
