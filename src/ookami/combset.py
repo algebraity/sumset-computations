@@ -219,7 +219,7 @@ class CombSet():
 
     @property
     def density(self):
-        return self.cardinality / (self._set[-1] - self._set[0] + 1)
+        return Fraction(self.cardinality, (self._set[-1] - self._set[0] + 1))
 
     @property
     def ads(self):

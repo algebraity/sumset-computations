@@ -14,11 +14,11 @@ HEADER = [
 ]
 
 
-def mask_to_subset(mask: int, n: int) -> tuple[int, ...]:
+def _mask_to_subset(mask: int, n: int) -> tuple[int, ...]:
     return tuple(i + 1 for i in range(n) if (mask >> i) & 1)
 
 
-def compute_row(subset: tuple[int, ...]) -> list:
+def _compute_row(subset: tuple[int, ...]) -> list:
     S = CombSet(subset)
     info = S.info()
     return [
@@ -52,7 +52,8 @@ def _worker(task: WorkerTask) -> str:
     )
 
     total = 1 << n
-    path = os.path.join(out_dir, f"set_info_{n}_{chunk_id:04d}.csv")
+    file_id = chunk_id+1
+    path = os.path.join(out_dir, f"set_info_{n}_{file_id:04d}.csv")
 
     with open(path, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
@@ -62,8 +63,8 @@ def _worker(task: WorkerTask) -> str:
         for mask in range(chunk_id, total, k):
             if mask == 0:
                 continue
-            subset = mask_to_subset(mask, n)
-            buf.append(compute_row(subset))
+            subset = _mask_to_subset(mask, n)
+            buf.append(_compute_row(subset))
 
             if len(buf) >= flush_every:
                 w.writerows(buf)
@@ -76,7 +77,7 @@ def _worker(task: WorkerTask) -> str:
     return path
 
 
-def export_powerset_info(n, out_dir, jobs, k, flush_every, mp_context="fork"):
+def _export_powerset_info(n, out_dir, jobs, k, flush_every, mp_context="fork"):
 
     if n < 1:
         raise ValueError("n must be >= 1")
@@ -104,13 +105,13 @@ def export_powerset_info(n, out_dir, jobs, k, flush_every, mp_context="fork"):
             done += 1
             print(f"{(100*done)//k}% done, wrote {path}, {time.time()-t0:.1f}s since start")
 
-compute_powerset_info = export_powerset_info
+compute_powerset_info = _export_powerset_info
 
 def rand_sums(num_sums, length1, length2, min1, min2, max1, max2):
     results = []
     for _ in range(0, num_sums):
-        S1 = CombSet([])
-        S2 = CombSet([])
+        S1 = CombSet([0])
+        S2 = CombSet([0])
         S1.rand_set(length=length1, min_element=min1, max_element=max1)
         S2.rand_set(length=length2, min_element=min2, max_element=max2)
 
@@ -121,7 +122,9 @@ def rand_sums(num_sums, length1, length2, min1, min2, max1, max2):
 def rand_sets(num_sets, length, min_val, max_val):
     sets = []
     for i in range(0, num_sets):
-        sets.append(CombSet([0]).rand_set(length, min_val, max_val))
+        S = CombSet([0])
+        S.rand_set(length, min_val, max_val)
+        sets.append(S)
 
     return sets
 
