@@ -12,14 +12,15 @@ An implementation of methods and properties applicable to a diffset of the integ
 
 The 'combset' module depends on the following standard-library modules:
 
-` 'random'
-` 'fractions'
+- 'random'
+- 'fractions'
+- 'numpy'
 
 ---
 
 ### Attributes
 
-* `self._set: list[int]`
+* `self._set: np.ndarray`
   The mathematical set represented by the `CombSet` object.
 
 * `self.add_cache: dict[int, "CombSet"]`
@@ -131,7 +132,9 @@ The 'combset' module depends on the following standard-library modules:
 
 * `_normalize(self) -> None`
   Normalize the set by assigning
-  `self._set = sorted(set(self._set))`.
+  `self._set = np.asarray(self._set, dtype=np.int64)`
+  if not already an array, and then
+  `self._set = np.unique(self._set)`
 
 ---
 

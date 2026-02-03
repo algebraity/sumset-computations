@@ -1,11 +1,11 @@
 ![OOKAMI logo](https://github.com/algebraity/ookami/blob/main/ookami.png)
 
-# OOKAMI - v1.1.1
+# OOKAMI - v1.2.0
 
 The purpose of this project is to provide a set of tools that can be used for computations with
 subsets of the integers in additive and multiplicative combinatorics. It is designed with my own research goals
 in mind, and thus it may not meet the needs of other projects exactly, but it is well-documented so that 
-others may use it for their own work. The project is entirely Python-based; see [Dependencies](https://github.com/algebraity/ookami?tab=readme-ov-file#dependencies) for a list of all dependencies.
+others may use it for their own work. The project is entirely Python-based, using NumPy for efficient computations; see [Dependencies](https://github.com/algebraity/ookami?tab=readme-ov-file#dependencies) for a list of all dependencies.
 
 OOKAMI is under active development. While its core functionality is stable, the API may evolve, and users are recommended to consult the source before using it for production work. While this 
 README file provides basic descriptions and demonstrations of OOKAMI's features, full documentation is available within the `docs` directory, which is included in every release.
@@ -14,7 +14,7 @@ For questions about licensing, see [License and attribution](https://github.com/
 
 ## Dependencies
 
-The `ookami.combset` module requires only the `random` and `fractions` packages by default, while `ookami.tools` requires the `os`, `csv`, `json`, `time`, `multiprocessing`, and `dataclasses` packages. These packages are all a part of the Python standard library, so having a recent version of Python3 installed should be enough to run OOKAMI.
+The `ookami.combset` module requires the `random`, `fractions` and 'numpy' packages by default, while `ookami.tools` requires the `os`, `csv`, `json`, `time`, `multiprocessing`, and `dataclasses` packages. All of these packages, except for NumPy, are a part of the Python standard library, so having a recent version of Python3 installed in addition to the NumPy package should be enough to run OOKAMI.
 
 ## Installation
 
@@ -40,6 +40,7 @@ For documentation on what OOKAMI includes and how to use it, read the markdown f
 ## Features
 * Represent a finite set of integers with a `CombSet` object
 * Manipulate the underlying set `CombSet._set` through operations `CombSet.add(x)` and `CombSet.remove(x)` (direct manipulation of CombSet._set is not supported)
+* Sets and operations on them are implemented via NumPy, giving huge performance advantages over pure Python
 * Form sumsets: `A + B = {a + b; a in A, b in B}`
 * Translation by a constant: `A.translate(x) = {a + x : a in A}`
 * Repeated addition with self: `n*A = A + A + ... + A`
@@ -105,7 +106,7 @@ Example use of `ookami.tools.compute_powerset_info`
 Python 3.14.2 (main, Jan  2 2026, 14:27:39) [GCC 15.2.1 20251112] on linux
 Type "help", "copyright", "credits" or "license" for more information.
 >>> from ookami import *
->>> compute_powerset_info(15, "data", 4, 5, 4000)   # input: (n, out_dir, jobs, k, buffer_size)
+>>> compute_powerset_info(15, "data", 4, 5, 4000, False)   # input: (n, out_dir, jobs, k, buffer_size, compute_minimal); compute_minimal=True writes only S, |S+S|, and |S*S|
 20% done, wrote data/set_info_15_0003.csv, 1.0s since start
 40% done, wrote data/set_info_15_0002.csv, 1.0s since start
 60% done, wrote data/set_info_15_0001.csv, 1.0s since start

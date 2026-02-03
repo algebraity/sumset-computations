@@ -6,11 +6,14 @@ import multiprocessing as mp
 from dataclasses import dataclass
 from ookami import CombSet
 
-
 HEADER = [
     "set", "add_ds_card", "diff_ds_card", "mult_ds_card",
     "set_cardinality", "diameter", "density", "dc",
     "is_ap", "is_gp", "add_energy", "mult_energy"
+]
+
+MIN_HEADER = [
+    "set", "add_ds_card", "mult_ds_card"
 ]
 
 
@@ -22,7 +25,7 @@ def _compute_row(subset: tuple[int, ...]) -> list:
     S = CombSet(subset)
     info = S.info()
     return [
-        json.dumps(S._set),
+        json.dumps(list(S._set)),
         info["add_ds"].cardinality,
         info["diff_ds"].cardinality,
         info["mult_ds"].cardinality,
@@ -36,6 +39,13 @@ def _compute_row(subset: tuple[int, ...]) -> list:
         info["mult_energy"],
     ]
 
+def _compute_row_min(subset: tuple[int, ...]) -> list:
+    S = CombSet(subset)
+    return [
+        json.dumps(list(S._set)),
+        (S.ads).cardinality,
+        (S.mds).cardinality
+    ]
 
 @dataclass(frozen=True)
 class WorkerTask:
@@ -44,6 +54,7 @@ class WorkerTask:
     k: int
     flush_every: int
     out_dir: str
+    minimal: bool
 
 
 def _worker(task: WorkerTask) -> str:
@@ -57,14 +68,19 @@ def _worker(task: WorkerTask) -> str:
 
     with open(path, "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
-        w.writerow(HEADER)
+        if task.minimal:
+            w.writerow(MIN_HEADER)
+            to_call = _compute_row_min
+        else:
+            w.writerow(HEADER)
+            to_call = _compute_row
 
         buf: list[list] = []
         for mask in range(chunk_id, total, k):
             if mask == 0:
                 continue
             subset = _mask_to_subset(mask, n)
-            buf.append(_compute_row(subset))
+            buf.append(to_call(subset))
 
             if len(buf) >= flush_every:
                 w.writerows(buf)
@@ -77,8 +93,7 @@ def _worker(task: WorkerTask) -> str:
     return path
 
 
-def _export_powerset_info(n, out_dir, jobs, k, flush_every, mp_context="fork"):
-
+def _export_powerset_info(n, out_dir, jobs, k, flush_every, min_computation, mp_context="fork"):
     if n < 1:
         raise ValueError("n must be >= 1")
     if jobs < 1:
@@ -97,7 +112,7 @@ def _export_powerset_info(n, out_dir, jobs, k, flush_every, mp_context="fork"):
     except ValueError:
         ctx = mp.get_context()
 
-    tasks = [WorkerTask(i, n, k*jobs, flush_every, out_dir) for i in range(k*jobs)]
+    tasks = [WorkerTask(i, n, k*jobs, flush_every, out_dir, min_computation) for i in range(k*jobs)]
 
     with ctx.Pool(processes=jobs) as pool:
         done = 0
