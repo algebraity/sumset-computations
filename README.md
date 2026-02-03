@@ -5,10 +5,9 @@
 The purpose of this project is to provide a set of tools that can be used for computations with
 subsets of the integers in additive and multiplicative combinatorics. It is designed with my own research goals
 in mind, and thus it may not meet the needs of other projects exactly, but it is well-documented so that 
-others may use it for their own work. The project is entirely Python-based, using NumPy for efficient computations; see [Dependencies](https://github.com/algebraity/ookami?tab=readme-ov-file#dependencies) for a list of all dependencies.
+others may use it for their own work. The project is entirely Python-based, using NumPy for efficient computations; see [Dependencies](https://github.com/algebraity/ookami?tab=readme-ov-file#dependencies) for a list of all dependencies. Full documentation is available within the `docs` directory, which is included in every release.
 
-OOKAMI is under active development. While its core functionality is stable, the API may evolve, and users are recommended to consult the source before using it for production work. While this 
-README file provides basic descriptions and demonstrations of OOKAMI's features, full documentation is available within the `docs` directory, which is included in every release.
+As of v1.2.0, I consider OOKAMI complete in the sense that there are no more features or optimizations I intend to add to it for now. I will still push minor releases (e.g. v1.2.x) if patches are necessary to fix bugs or improve basic functioning, but for now I am satisfied with the project. If you find a bug or would like to see a feature added, please raise an issue or message me. Of course, since OOKAMI is open source, you may clone this repository and implement a feature if you prefer.
 
 For questions about licensing, see [License and attribution](https://github.com/algebraity/ookami#license-and-attribution).
 
