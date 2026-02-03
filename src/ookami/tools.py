@@ -1,10 +1,10 @@
 import os
 import csv
-import json
 import time
 import multiprocessing as mp
 from dataclasses import dataclass
 from ookami import CombSet
+from typing import Any, List, Tuple
 
 HEADER = [
     "set", "add_ds_card", "diff_ds_card", "mult_ds_card",
@@ -21,7 +21,7 @@ def _mask_to_subset(mask: int, n: int) -> tuple[int, ...]:
     return tuple(i + 1 for i in range(n) if (mask >> i) & 1)
 
 
-def _compute_row(subset: tuple[int, ...], mask: int) -> list:
+def _compute_row(subset: tuple[int, ...], mask: int) -> List[Any]:
     S = CombSet(subset)
     info = S.info()
     return [
@@ -39,7 +39,7 @@ def _compute_row(subset: tuple[int, ...], mask: int) -> list:
         info["mult_energy"],
     ]
 
-def _compute_row_min(subset: tuple[int, ...], mask: int) -> list:
+def _compute_row_min(subset: tuple[int, ...], mask: int) -> List[Any]:
     S = CombSet(subset)
     return [
         mask,
@@ -93,7 +93,7 @@ def _worker(task: WorkerTask) -> str:
     return path
 
 
-def _export_powerset_info(n: int, out_dir: str, jobs: int, k: int, flush_every: int, min_computation: bool = True, mp_context="fork") -> None:
+def _export_powerset_info(n: int, out_dir: str, jobs: int, k: int, flush_every: int, min_computation: bool = True, mp_context: str = "fork") -> None:
     if n < 1:
         raise ValueError("n must be >= 1")
     if jobs < 1:
@@ -122,7 +122,7 @@ def _export_powerset_info(n: int, out_dir: str, jobs: int, k: int, flush_every: 
 
 compute_powerset_info = _export_powerset_info
 
-def rand_sums(num_sums: int, length1: int, length2: int, min1: int, min2: int, max1: int, max2: int) -> list[tuple]:
+def rand_sums(num_sums: int, length1: int, length2: int, min1: int, min2: int, max1: int, max2: int) -> List[Tuple[CombSet, CombSet, CombSet]]:
     results = []
     for _ in range(0, num_sums):
         S1 = CombSet([0])
@@ -134,8 +134,8 @@ def rand_sums(num_sums: int, length1: int, length2: int, min1: int, min2: int, m
 
     return(results)
 
-def rand_sets(num_sets: int, length: int, min_val: int, max_val: int) -> lit[CombSet]:
-    sets = []
+def rand_sets(num_sets: int, length: int, min_val: int, max_val: int) -> List[CombSet]:
+    sets: List[CombSet] = []
     for i in range(0, num_sets):
         S = CombSet([0])
         S.rand_set(length, min_val, max_val)

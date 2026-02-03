@@ -14,6 +14,7 @@ The 'combset' module depends on the following standard-library modules:
 
 - 'random'
 - 'fractions'
+- 'typing' (used for type annotations)
 - 'numpy'
 
 ---
@@ -44,6 +45,15 @@ The 'combset' module depends on the following standard-library modules:
 * `self.energies: dict[str, int]`
   Stores additive and multiplicative energies once computed.
 
+* `k_energy_add(self, k: int) -> int`  
+  Compute the ordered k-fold additive energy E_k(A) = sum_x r_{kA}(x)^2 where r_{kA}(x) counts ordered representations of x as a sum of k elements of A. Results are cached in `self.energies` under the key `("add", k)`.
+
+* `k_energy_diff(self, k: int) -> int`  
+  Compute the ordered k-fold difference energy (analogous to additive energy but using repeated differences). Cached under `("diff", k)`.
+
+* `k_energy_mult(self, k: int) -> int`  
+  Compute the ordered k-fold multiplicative energy E_k^\times(A) = sum_x r_{A^{(k)}}(x)^2 where r counts ordered k-fold products. Cached under `("mult", k)`.
+
 ---
 
 ### Methods
@@ -61,14 +71,14 @@ The 'combset' module depends on the following standard-library modules:
   Translate the set ( A ) by `n`, returning
   ( A + {n} = {a + n : a \in A} ).
 
-* `rep_add(self, x: int) -> int`
-  Return the representation function ( r_{A+A}(x) ) for a given integer `x`.
+* `rep_add(self, k: int, x: int) -> int`
+  Return the ordered k-fold representation function r_{kA}(x) counting ordered representations of `x` as a sum of `k` elements of `A`.
 
-* `rep_diff(self, x: int) -> int`
-  Return the representation function ( r_{A-A}(x) ) for a given integer `x`.
+* `rep_diff(self, k: int, x: int) -> int`
+  Return the ordered k-fold representation function counting ordered representations of `x` as an alternating difference of `k` elements (generalizing A-A).
 
-* `rep_mult(self, x: int) -> int`
-  Return the representation function ( r_{A\cdot A}(x) ) for a given integer `x`.
+* `rep_mult(self, k: int, x: int) -> int`
+  Return the ordered k-fold multiplicative representation function counting ordered representations of `x` as a product of `k` elements of `A`.
 
 * `rand_set(self, length: int = 0, min_element: int = 0, max_element: int = 0) -> "CombSet"`
   Generate a random `CombSet` with the given parameters.

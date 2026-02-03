@@ -14,10 +14,10 @@ The `tools` module depends on the following standard-library modules:
 
 - `os`
 - `csv`
-- `json`
 - `time`
 - `multiprocessing`
 - `dataclasses`
+- `typing` (used for type annotations)
 - `numpy`
 
 It also depends on the CombSet class from the `ookami` package:

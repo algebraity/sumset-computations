@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 import random as rand
 from fractions import Fraction
 import numpy as np
+from typing import Any, Dict, Iterator, List, Optional, Sequence, Tuple, Union
 
 class CombSet():
-    def __init__(self, base_set=None):
+    def __init__(self, base_set: Optional[Union[Sequence[int], np.ndarray]] = None) -> None:
         if base_set is not None:
             if isinstance(base_set, list):
                 if base_set == []:
@@ -26,12 +29,12 @@ class CombSet():
         if base_set is None:
             self.construct()
 
-    def add(self, x):
+    def add(self, x: int) -> None:
         self._set = np.append(self._set, np.int64(x))
         self._normalize()
         self._clear_cache()
 
-    def remove(self, x):
+    def remove(self, x: int) -> None:
         x = np.int64(x)
         if self.cardinality > 0:
             self._set = self._set[self._set != x]
@@ -40,7 +43,7 @@ class CombSet():
         self._normalize()
         self._clear_cache()
 
-    def construct(self, nums=None):
+    def construct(self, nums: Optional[Union[Sequence[int], np.ndarray]] = None) -> None:
         if nums == []:
             raise ValueError("nums cannot be empty.")
 
@@ -75,41 +78,47 @@ class CombSet():
             self._normalize()
             self._clear_cache()
 
-    def translate(self, n):
+    def translate(self, n: int) -> CombSet:
         n = np.int64(n)
         return CombSet(self._set + n)
 
-    def rep_add(self, x):
-        if int(x) in self.rep_add_cache:
-            return self.rep_add_cache[int(x)]
-        
+    def rep_add(self, k: int, x: int) -> int:
+        if (k, int(x)) in self.rep_add_cache:
+            return self.rep_add_cache[(k, int(x))]
+
         x = np.int64(x)
         vals = np.add.outer(self._set, self._set)
+        for _ in range(int(k) - 2):
+            vals = np.add.outer(vals, self._set).reshape(-1, self._set.size)
         rep = int(np.count_nonzero(vals == x))
-        self.rep_add_cache[int(x)] = rep
-        return self.rep_add_cache[int(x)]
+        self.rep_add_cache[(k, int(x))] = rep
+        return self.rep_add_cache[(k, int(x))]
 
-    def rep_diff(self, x):
-        if int(x) in self.rep_diff_cache:
-            return self.rep_diff_cache[int(x)]
-        
+    def rep_diff(self, k: int, x: int) -> int:
+        if (k, int(x)) in self.rep_diff_cache:
+            return self.rep_diff_cache[(k, int(x))]
+
         x = np.int64(x)
         vals = np.subtract.outer(self._set, self._set)
+        for _ in range(int(k) - 2):
+            vals = np.subtract.outer(vals, self._set).reshape(-1, self._set.size)
         rep = int(np.count_nonzero(vals == x))
-        self.rep_diff_cache[int(x)] = rep
-        return self.rep_diff_cache[int(x)]
+        self.rep_diff_cache[(k, int(x))] = rep
+        return self.rep_diff_cache[(k, int(x))]
 
-    def rep_mult(self, x):
-        if int(x) in self.rep_mult_cache:
-            return self.rep_mult_cache[int(x)]
-        
+    def rep_mult(self, k: int, x: int) -> int:
+        if (k, int(x)) in self.rep_mult_cache:
+            return self.rep_mult_cache[(k, int(x))]
+
         x = np.int64(x)
         vals = np.multiply.outer(self._set, self._set)
+        for _ in range(int(k) - 2):
+            vals = np.multiply.outer(vals, self._set).reshape(-1, self._set.size)
         rep = int(np.count_nonzero(vals == x))
-        self.rep_mult_cache[int(x)] = rep
-        return self.rep_mult_cache[int(x)]
+        self.rep_mult_cache[(k, int(x))] = rep
+        return self.rep_mult_cache[(k, int(x))]
 
-    def rand_set(self, length=0, min_element=0, max_element=0):
+    def rand_set(self, length: int = 0, min_element: int = 0, max_element: int = 0) -> None:
         if length == 0:
             raise ValueError("length must be greater than 0.")
         gen_set = []
@@ -124,7 +133,7 @@ class CombSet():
         self._normalize()
         self._clear_cache()        
 
-    def info(self, n=-1):
+    def info(self, n: int = -1) -> Dict[str, Any]:
         self_sum = self.ads
         self_diff = self.dds
         self_prod = self.mds
@@ -215,27 +224,53 @@ class CombSet():
 
     @property
     def energy_add(self):
-        if "add" in self.energies:
-            return self.energies["add"]
+        return self.k_energy_add(2)
 
-        vals = np.add.outer(self._set, self._set).ravel()
-        _, counts = np.unique(vals, return_counts=True)
-        energy = int(np.sum(counts.astype(np.int64)**2))
-        self.energies["add"] = energy
-        return self.energies["add"]
+    def k_energy_add(self, k: int) -> int:
+        if ("add", int(k)) in self.energies:
+            return self.energies[("add", int(k))]
+
+        vals = np.add.outer(self._set, self._set)
+        for _ in range(int(k) - 2):
+            vals = np.add.outer(vals, self._set).reshape(-1, self._set.size)
+        _, counts = np.unique(vals.ravel(), return_counts=True)
+        energy = int(np.sum(counts.astype(np.int64) ** 2))
+        self.energies[("add", int(k))] = energy
+        return self.energies[("add", int(k))]
+
+    @property
+    def energy_diff(self):
+        return self.k_energy_diff(2)
+
+    def k_energy_diff(self, k: int) -> int:
+        if ("diff", int(k)) in self.energies:
+            return self.energies[("diff", int(k))]
+
+        vals = np.subtract.outer(self._set, self._set)
+        for _ in range(int(k) - 2):
+            vals = np.subtract.outer(vals, self._set).reshape(-1, self._set.size)
+        _, counts = np.unique(vals.ravel(), return_counts=True)
+        energy = int(np.sum(counts.astype(np.int64) ** 2))
+        self.energies[("diff", int(k))] = energy
+        return self.energies[("diff", int(k))]
 
     @property
     def energy_mult(self):
-        if "mult" in self.energies:
-            return self.energies["mult"]
+        return self.k_energy_mult(2)
 
-        vals = np.multiply.outer(self._set, self._set).ravel()
-        _, counts = np.unique(vals, return_counts=True)
-        energy = int(np.sum(counts.astype(np.int64)**2))
-        self.energies["mult"] = energy
-        return self.energies["mult"]
+    def k_energy_mult(self, k: int) -> int:
+        if ("mult", int(k)) in self.energies:
+            return self.energies[("mult", int(k))]
 
-    def _clear_cache(self):
+        vals = np.multiply.outer(self._set, self._set)
+        for _ in range(int(k) - 2):
+            vals = np.multiply.outer(vals, self._set).reshape(-1, self._set.size)
+        _, counts = np.unique(vals.ravel(), return_counts=True)
+        energy = int(np.sum(counts.astype(np.int64) ** 2))
+        self.energies[("mult", int(k))] = energy
+        return self.energies[("mult", int(k))]
+
+    def _clear_cache(self) -> None:
         self.add_cache = {}
         self.diff_cache = {}
         self.mult_cache = {}
@@ -244,7 +279,7 @@ class CombSet():
         self.rep_mult_cache = {}
         self.energies = {}
 
-    def _normalize(self):
+    def _normalize(self) -> None:
         if isinstance(self._set, np.ndarray):
             a = self._set
         else:
@@ -256,7 +291,7 @@ class CombSet():
         a = np.unique(a)
         self._set = a
 
-    def __add__(self, other):
+    def __add__(self, other: Union[CombSet, int]) -> CombSet:
         if not isinstance(other, CombSet):
             if isinstance(other, int):
                 return self.translate(other)
@@ -270,7 +305,7 @@ class CombSet():
             return self.add_cache[2]
         return CombSet(new_set)
 
-    def __sub__(self, other):
+    def __sub__(self, other: Union[CombSet, int]) -> CombSet:
         if not isinstance(other, CombSet):
             if isinstance(other, int):
                 return self.translate(-other)
@@ -284,7 +319,7 @@ class CombSet():
             return self.diff_cache[2]
         return CombSet(new_set)
 
-    def __rmul__(self, other):
+    def __rmul__(self, other: int) -> CombSet:
         if isinstance(other, int):
             if other == 0:
                 return CombSet([0])
@@ -303,7 +338,7 @@ class CombSet():
             return result
         raise TypeError("Multiplication is only supported for CombSet * CombSet, int * CombSet, and CombSet * int.")
 
-    def __mul__(self, other):
+    def __mul__(self, other: Union[int, CombSet]) -> CombSet:
         if isinstance(other, int):
             if other == 0:
                 return CombSet([0])
@@ -320,7 +355,7 @@ class CombSet():
             return CombSet(prod_set)
         raise TypeError("Multiplication is only supported for CombSet * CombSet, int * CombSet, and CombSet * int.")
 
-    def __pow__(self, other):
+    def __pow__(self, other: int) -> CombSet:
         if isinstance(other, int):
             if other == 0:
                 return CombSet([1])
@@ -338,19 +373,19 @@ class CombSet():
         raise TypeError("Exponentiation is only supported for CombSet ** int.")
 
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "CombSet(" + str(self._set.tolist()) + ")"
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[int]:
         return (int(x) for x in self._set)
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, CombSet):
             return bool(np.array_equal(self._set, other._set))
         else:
             return False
         
-    def __neg__(self):
+    def __neg__(self) -> CombSet:
         return CombSet((-self._set))
 
     __repr__ = __str__

@@ -61,6 +61,7 @@ For documentation on what OOKAMI includes and how to use it, read the markdown f
   * Is GP (True/False): `CombSet.is_geometric_progression`
   * Ordered additive energy: `CombSet.energy_add`
   * Multiplicative energy: `CombSet.energy_mult`
+  * k-fold ordered energies: `CombSet.k_energy_add(k)`, `CombSet.k_energy_diff(k)`, `CombSet.k_energy_mult(k)` — compute ordered k-fold energies (generalizing `energy_add` / `energy_mult`); `energy_add`/`energy_mult` call these with `k=2`.
 * Return invariants as a dictionary with `CombSet.info(n)`
 * Results of operations with a set and itself are cached for future use
 * Computational tools including computing the properties of power sets, generating random sets, and generating random sums are available through the `tools` module
