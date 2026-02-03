@@ -1,5 +1,6 @@
 import os
 import csv
+import json
 import time
 import multiprocessing as mp
 from dataclasses import dataclass
@@ -12,7 +13,7 @@ HEADER = [
 ]
 
 MIN_HEADER = [
-    "set", "add_ds_card", "diff_ds_card", "mult_ds_card"
+    "set", "add_ds_card", "mult_ds_card"
 ]
 
 
@@ -20,30 +21,29 @@ def _mask_to_subset(mask: int, n: int) -> tuple[int, ...]:
     return tuple(i + 1 for i in range(n) if (mask >> i) & 1)
 
 
-def _compute_row(subset: tuple[int, ...]) -> list:
+def _compute_row(subset: tuple[int, ...], mask: int) -> list:
     S = CombSet(subset)
     info = S.info()
     return [
-        json.dumps(list(int(x) for x in S._set)),
+        mask,
         info["add_ds"].cardinality,
         info["diff_ds"].cardinality,
         info["mult_ds"].cardinality,
         info["cardinality"],
         info["diameter"],
         info["density"],
-        json.dumps(info["dc"]),
+        str(info["dc"]),
         info["is_ap"],
         info["is_gp"],
         info["add_energy"],
         info["mult_energy"],
     ]
 
-def _compute_row_min(subset: tuple[int, ...]) -> list:
+def _compute_row_min(subset: tuple[int, ...], mask: int) -> list:
     S = CombSet(subset)
     return [
-        str(list(int(x) for x in S._set),
+        mask,
         (S.ads).cardinality,
-        (S.dds).cardinality,
         (S.mds).cardinality
     ]
 
@@ -80,7 +80,7 @@ def _worker(task: WorkerTask) -> str:
             if mask == 0:
                 continue
             subset = _mask_to_subset(mask, n)
-            buf.append(to_call(subset))
+            buf.append(to_call(subset, mask))
 
             if len(buf) >= flush_every:
                 w.writerows(buf)
@@ -93,7 +93,7 @@ def _worker(task: WorkerTask) -> str:
     return path
 
 
-def _export_powerset_info(n, out_dir, jobs, k, flush_every, min_computation, mp_context="fork"):
+def _export_powerset_info(n: int, out_dir: str, jobs: int, k: int, flush_every: int, min_computation: bool = True, mp_context="fork") -> None:
     if n < 1:
         raise ValueError("n must be >= 1")
     if jobs < 1:
@@ -122,7 +122,7 @@ def _export_powerset_info(n, out_dir, jobs, k, flush_every, min_computation, mp_
 
 compute_powerset_info = _export_powerset_info
 
-def rand_sums(num_sums, length1, length2, min1, min2, max1, max2):
+def rand_sums(num_sums: int, length1: int, length2: int, min1: int, min2: int, max1: int, max2: int) -> list[tuple]:
     results = []
     for _ in range(0, num_sums):
         S1 = CombSet([0])
@@ -134,7 +134,7 @@ def rand_sums(num_sums, length1, length2, min1, min2, max1, max2):
 
     return(results)
 
-def rand_sets(num_sets, length, min_val, max_val):
+def rand_sets(num_sets: int, length: int, min_val: int, max_val: int) -> lit[CombSet]:
     sets = []
     for i in range(0, num_sets):
         S = CombSet([0])
