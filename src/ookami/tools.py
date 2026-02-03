@@ -13,7 +13,7 @@ HEADER = [
 ]
 
 MIN_HEADER = [
-    "set", "add_ds_card", "mult_ds_card"
+    "set", "add_ds_card", "diff_ds_card", "mult_ds_card"
 ]
 
 
@@ -44,6 +44,7 @@ def _compute_row_min(subset: tuple[int, ...]) -> list:
     return [
         json.dumps(S._set.tolist()),
         (S.ads).cardinality,
+        (S.dds).cardinality,
         (S.mds).cardinality
     ]
 
