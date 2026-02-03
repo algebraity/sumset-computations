@@ -1,6 +1,5 @@
 import os
 import csv
-import json
 import time
 import multiprocessing as mp
 from dataclasses import dataclass
@@ -25,14 +24,14 @@ def _compute_row(subset: tuple[int, ...]) -> list:
     S = CombSet(subset)
     info = S.info()
     return [
-        json.dumps(S._set.tolist()),
+        json.dumps(list(int(x) for x in S._set)),
         info["add_ds"].cardinality,
         info["diff_ds"].cardinality,
         info["mult_ds"].cardinality,
         info["cardinality"],
         info["diameter"],
         info["density"],
-        str(info["dc"]),
+        json.dumps(info["dc"]),
         info["is_ap"],
         info["is_gp"],
         info["add_energy"],
@@ -42,7 +41,7 @@ def _compute_row(subset: tuple[int, ...]) -> list:
 def _compute_row_min(subset: tuple[int, ...]) -> list:
     S = CombSet(subset)
     return [
-        json.dumps(S._set.tolist()),
+        str(list(int(x) for x in S._set),
         (S.ads).cardinality,
         (S.dds).cardinality,
         (S.mds).cardinality
