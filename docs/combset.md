@@ -80,6 +80,26 @@ The 'combset' module depends on the following standard-library modules:
 * `rep_mult(self, x: int, k: int = 2) -> int`
   Return the ordered k-fold multiplicative representation function counting ordered representations of `x` as a product of `k` elements of `A`. The argument order is `(x, k)` and `k` defaults to `2`.
 
+* `ruzsa_distance(self, other: "CombSet") -> float`
+  The (additive) Ruzsa distance between two sets A and B defined by
+
+  $$d(A,B)=\log\frac{|A-B|}{\sqrt{|A||B|}}$$
+
+  - **Parameters:** `other` — a `CombSet` representing B.
+  - **Returns:** `float` — the value of the Ruzsa distance. Returns `inf` when the denominator is zero (this is just to catch bugs, as the empty set is not supported).
+  - **Notes:** Uses the implemented difference set `A - B` (i.e. `self - other`) and the cardinalities |A|, |B|. Matches `CombSet.ruzsa_distance` implementation.
+  - **Example:** `A.ruzsa_distance(B)` computes `np.log((A - B).cardinality / (A.cardinality*B.cardinality)**0.5)`.
+
+* `ruzsa_distance_positive(self, other: "CombSet") -> float`
+  A closely related positive Ruzsa-type distance using the sumset instead of the difference set:
+
+  $$d^+(A,B)=\log\frac{|A+B|}{\sqrt{|A||B|}}$$
+
+  - **Parameters:** `other` — a `CombSet` representing B.
+  - **Returns:** `float` — the value of the positive Ruzsa distance. Returns `inf` when the denominator is zero (this is just to catch bugs, as the empty set is not supported).
+  - **Notes:** Uses the sumset `A + B` (i.e. `self + other`). Matches `CombSet.ruzsa_distance_positive` implementation.
+  - **Example:** `A.ruzsa_distance_positive(B)` computes `np.log((A + B).cardinality / (A.cardinality*B.cardinality)**0.5)`.
+
 * `rand_set(self, length: int = 0, min_element: int = 0, max_element: int = 0) -> "CombSet"`
   Generate a random `CombSet` with the given parameters.
 
