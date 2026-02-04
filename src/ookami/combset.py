@@ -257,6 +257,16 @@ class CombSet():
     @property
     def energy_mult(self):
         return self.k_energy_mult(2)
+    
+    def ruzsa_distance(self, other: CombSet) -> float:
+        num = (self - other).cardinality
+        denom = (self.cardinality * other.cardinality)**(1/2)
+        return float(np.log(num / denom) if denom > 0 else float('inf'))
+
+    def ruzsa_distance_positive(self, other: CombSet) -> float:
+        num = (self + other).cardinality
+        denom = (self.cardinality * other.cardinality)**(1/2)
+        return float(np.log(num / denom) if denom > 0 else float('inf'))
 
     def k_energy_mult(self, k: int) -> int:
         if ("mult", int(k)) in self.energies:
