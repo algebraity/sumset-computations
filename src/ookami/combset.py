@@ -30,12 +30,12 @@ class CombSet():
             self.construct()
 
     def add(self, x: int) -> None:
-        self._set = np.append(self._set, np.int64(x))
+        self._set = np.append(self._set, int(x))
         self._normalize()
         self._clear_cache()
 
     def remove(self, x: int) -> None:
-        x = np.int64(x)
+        x = int(x)
         if self.cardinality > 0:
             self._set = self._set[self._set != x]
         if self._set.size == 0:
@@ -79,14 +79,14 @@ class CombSet():
             self._clear_cache()
 
     def translate(self, n: int) -> CombSet:
-        n = np.int64(n)
+        n = int(n)
         return CombSet(self._set + n)
 
     def rep_add(self, x: int, k: int = 2) -> int:
         if (k, int(x)) in self.rep_add_cache:
             return self.rep_add_cache[(k, int(x))]
 
-        x = np.int64(x)
+        x = int(x)
         vals = np.add.outer(self._set, self._set)
         for _ in range(int(k) - 2):
             vals = np.add.outer(vals, self._set).reshape(-1, self._set.size)
@@ -98,7 +98,7 @@ class CombSet():
         if (k, int(x)) in self.rep_diff_cache:
             return self.rep_diff_cache[(k, int(x))]
 
-        x = np.int64(x)
+        x = int(x)
         vals = np.subtract.outer(self._set, self._set)
         for _ in range(int(k) - 2):
             vals = np.subtract.outer(vals, self._set).reshape(-1, self._set.size)
@@ -110,7 +110,7 @@ class CombSet():
         if (k, int(x)) in self.rep_mult_cache:
             return self.rep_mult_cache[(k, int(x))]
 
-        x = np.int64(x)
+        x = int(x)
         vals = np.multiply.outer(self._set, self._set)
         for _ in range(int(k) - 2):
             vals = np.multiply.outer(vals, self._set).reshape(-1, self._set.size)
@@ -234,7 +234,7 @@ class CombSet():
         for _ in range(int(k) - 2):
             vals = np.add.outer(vals, self._set).reshape(-1, self._set.size)
         _, counts = np.unique(vals.ravel(), return_counts=True)
-        energy = int(np.sum(counts.astype(np.int64) ** 2))
+        energy = int(np.sum(counts.astype(int) ** 2))
         self.energies[("add", int(k))] = energy
         return self.energies[("add", int(k))]
 
@@ -250,7 +250,7 @@ class CombSet():
         for _ in range(int(k) - 2):
             vals = np.subtract.outer(vals, self._set).reshape(-1, self._set.size)
         _, counts = np.unique(vals.ravel(), return_counts=True)
-        energy = int(np.sum(counts.astype(np.int64) ** 2))
+        energy = int(np.sum(counts.astype(int) ** 2))
         self.energies[("diff", int(k))] = energy
         return self.energies[("diff", int(k))]
 
@@ -276,7 +276,7 @@ class CombSet():
         for _ in range(int(k) - 2):
             vals = np.multiply.outer(vals, self._set).reshape(-1, self._set.size)
         _, counts = np.unique(vals.ravel(), return_counts=True)
-        energy = int(np.sum(counts.astype(np.int64) ** 2))
+        energy = int(np.sum(counts.astype(int) ** 2))
         self.energies[("mult", int(k))] = energy
         return self.energies[("mult", int(k))]
 
@@ -293,11 +293,11 @@ class CombSet():
         if isinstance(self._set, np.ndarray):
             a = self._set
         else:
-            a = np.asarray(self._set, dtype=np.int64)
+            a = np.asarray(self._set, dtype=int)
         if a.size == 0:
             raise ValueError("self._set cannot be empty!")
-        if a.dtype != np.int64:
-            a = a.astype(np.int64, copy=False)
+        if a.dtype != int:
+            a = a.astype(int, copy=False)
         a = np.unique(a)
         self._set = a
 
@@ -352,7 +352,7 @@ class CombSet():
         if isinstance(other, int):
             if other == 0:
                 return CombSet([0])
-            new_set = self._set * np.int64(other)
+            new_set = self._set * int(other)
             return CombSet(new_set)
         if isinstance(other, CombSet):
             if self is other:

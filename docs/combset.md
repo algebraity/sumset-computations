@@ -162,7 +162,7 @@ The 'combset' module depends on the following standard-library modules:
 
 * `_normalize(self) -> None`
   Normalize the set by assigning
-  `self._set = np.asarray(self._set, dtype=np.int64)`
+  `self._set = np.asarray(self._set, dtype=int)`
   if not already an array, and then
   `self._set = np.unique(self._set)`
 
